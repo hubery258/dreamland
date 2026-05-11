@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-// PostDetail fetches a single post by id from the FastAPI backend.
-// The component includes explanatory comments so newcomers can follow along.
+// PostDetail: explains how the component works for newcomers.
+// Responsibilities:
+// - Read `:id` from the URL via `useParams()`.
+// - Fetch the full post JSON from the backend and render it.
+// - Handle loading/error/missing states in a user-friendly way.
 export default function PostDetail() {
   const { id } = useParams()
   const [post, setPost] = useState(null)
@@ -10,10 +13,9 @@ export default function PostDetail() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Build the URL for the API. We assume the backend runs on port 8000.
+    // URL to fetch the single post. Update if your API is hosted elsewhere.
     const url = `http://localhost:8000/posts/${id}`
 
-    // Fetch the post JSON. In production add better error handling and retries.
     fetch(url)
       .then(res => {
         if (!res.ok) throw new Error('Network response was not ok')
@@ -28,13 +30,14 @@ export default function PostDetail() {
   if (error) return <p>加载失败：{error}</p>
   if (!post) return <p>未找到文章。</p>
 
-  // Render a simple article layout. You can expand this to render HTML content.
+  // For simplicity we render `post.excerpt` as the body. When we import
+  // Markdown files later we'll render their HTML here.
   return (
     <article className="post">
       <h1 className="post-title">{post.title}</h1>
       <div className="post-info">ID: {post.id}</div>
       <p>{post.excerpt}</p>
-      <p><em>（这是一条示例详情；真实文章内容将从后端或文件系统加载。）</em></p>
+      <p><em>（真实文章内容将从 Markdown 文件加载并渲染为 HTML。）</em></p>
     </article>
   )
 }
