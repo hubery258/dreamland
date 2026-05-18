@@ -1,0 +1,30 @@
+# -------------------
+# Python / FastAPI
+# -------------------
+backend/venv/
+backend/__pycache__/
+backend/**/*.pyc
+backend/blog.db
+
+# 如果以后还有其它数据库、临时文件，也忽略
+*.db
+*.sqlite3
+
+# -------------------
+# Node / React / Vite
+# -------------------
+frontend/node_modules/
+frontend/dist/
+
+# -------------------
+# OS / Editor
+# -------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# -------------------
+# Logs
+# -------------------
+*.log
