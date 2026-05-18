@@ -6,12 +6,10 @@ function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        {/* 左侧站点名，点击回到首页 */}
         <Link to="/" className="site-logo">
           Dreamland
         </Link>
 
-        {/* 右侧导航 */}
         <nav className="site-nav">
           <NavLink
             to="/"
@@ -33,12 +31,12 @@ function Header() {
           </NavLink>
 
           <NavLink
-            to="/about"
+            to="/friends"
             className={({ isActive }) =>
               isActive ? "nav-link nav-link-active" : "nav-link"
             }
           >
-            About
+            Friends
           </NavLink>
         </nav>
       </div>

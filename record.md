@@ -468,3 +468,62 @@ React 应用真正挂载到页面的入口。
 所以只要后端数据库变了，前端再次请求时看到的就是新数据。
 
 这就是“前后端分离博客”的基本工作方式。
+
+## 修改
+
+我们这次会新增/修改这些文件：
+
+```bash
+src/
+├─ components/
+│  ├─ Header.jsx              # 改导航
+│  ├─ ProfileCard.jsx         # 新增：首页左侧个人卡片
+│  └─ FriendCard.jsx          # 新增：友链卡片
+├─ data/
+│  ├─ profile.js              # 新增：个人资料配置
+│  └─ friends.js              # 新增：友链数据
+├─ pages/
+│  ├─ HomePage.jsx            # 改成左卡片 + 右文章列表
+│  └─ FriendsPage.jsx         # 新增：友链页
+├─ App.jsx                    # 注册 /friends 路由
+└─ styles/
+   └─ global.css              # 追加新样式
+```
+
+另外要安装一个图标库：
+
+```bash
+npm install react-icons
+```
+
+## 新增 profile 配置文件
+
+### `frontend/src/data/profile.js`
+
+- 专门存你的个人资料卡片信息。
+- 以后你想改名字、简介、头像、社交链接，
+- 都只需要改这里，不用去组件里到处找。
+
+## 新增友链数据文件
+
+### `frontend/src/data/friends.js`
+
+## 新增个人卡片组件
+
+### `frontend/src/components/ProfileCard.jsx`
+
+### `frontend/src/components/FriendCard.jsx`
+
+## 改首页 HomePage
+
+这里要同时请求：
+- 文章列表
+- 标签列表
+
+因为左侧卡片要显示文章数和标签数。
+
+### `frontend/src/pages/HomePage.jsx`
+
+## 新增 Friends 页面
+
+### `frontend/src/pages/FriendsPage.jsx`
