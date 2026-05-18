@@ -4,6 +4,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from .database import engine, Base
 from .routers import posts, tags, site
@@ -42,3 +43,15 @@ def root():
     测试接口，用来确认服务已启动
     """
     return {"message": "Blog API is running"}
+
+@app.get("/admin/check")
+def admin_check():
+    """
+    这是一个可选测试接口：
+    用来确认后端是否读到了管理员密钥环境变量。
+    正式环境里也可以保留。
+    """
+    admin_key = os.getenv("ADMIN_SECRET", "")
+    return {
+        "admin_secret_configured": bool(admin_key)
+    }
