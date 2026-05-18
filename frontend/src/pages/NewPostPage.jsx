@@ -22,6 +22,7 @@ function parseTags(tagInput) {
 function NewPostPage() {
   const navigate = useNavigate();
 
+  const [adminSecret, setAdminSecret] = useState("");
   // 表单数据
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
@@ -37,6 +38,10 @@ function NewPostPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (!adminSecret.trim()) {
+      setError("请先输入管理员密钥。");
+      return;
+    }
     // 基础校验：标题和正文不能为空
     if (!title.trim()) {
       setError("标题不能为空。");
@@ -63,8 +68,7 @@ function NewPostPage() {
       };
 
       // 调用后端 API 创建文章
-      const createdPost = await createPost(payload);
-
+      const createdPost = await createPost(payload, adminSecret.trim());
       setSuccessMessage("文章发布成功，正在跳转...");
 
       // 发布成功后跳到新文章详情页
@@ -73,17 +77,23 @@ function NewPostPage() {
       }, 800);
     } catch (err) {
       console.error("发布文章失败:", err);
-      setError("发布失败，请检查后端是否启动，或者请求数据是否正确。");
+      if (String(err.message).includes("401")) {
+        setError("管理员密钥错误，无法发布文章。");
+      } else if (String(err.message).includes("500")) {
+        setError("服务器未配置管理员密钥，请先检查后端环境变量 ADMIN_SECRET。");
+      } else {
+        setError("发布失败，请检查后端是否启动，或管理员密钥是否正确。");
+      }
     } finally {
       setSubmitting(false);
     }
   }
 
-  return (
+return (
     <section className="page-section">
       <div className="wide-content-width">
         <div className="editor-page-grid">
-          {/* 左侧：表单区域 */}
+          {/* 左侧：表单 */}
           <div className="editor-panel">
             <div className="editor-heading-block">
               <p className="page-eyebrow">Admin</p>
@@ -92,6 +102,24 @@ function NewPostPage() {
             </div>
 
             <form className="post-form" onSubmit={handleSubmit}>
+              {/* 管理员密钥 */}
+              <div className="form-group">
+                <label htmlFor="admin-secret" className="form-label">
+                  管理员密钥 Admin Secret
+                </label>
+                <input
+                  id="admin-secret"
+                  type="password"
+                  className="form-input"
+                  value={adminSecret}
+                  onChange={(e) => setAdminSecret(e.target.value)}
+                  placeholder="请输入管理员密钥"
+                />
+                <p className="form-help-text">
+                  只有输入正确的管理员密钥，后端才会允许发帖。
+                </p>
+              </div>
+
               {/* 标题 */}
               <div className="form-group">
                 <label htmlFor="title" className="form-label">
@@ -161,21 +189,19 @@ function NewPostPage() {
                   className="form-textarea form-textarea-content"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  placeholder="# 输入 Markdown 正文
+                  placeholder={`# 输入 Markdown 正文
 
 例如：
 
 ## 小标题
 
-这是一段正文，可以写 **粗体**、列表、引用等。"
+这是一段正文，可以写 **粗体**、列表、引用等。`}
                 />
               </div>
 
-              {/* 提示信息 */}
               {error && <p className="error-text">{error}</p>}
               {successMessage && <p className="success-text">{successMessage}</p>}
 
-              {/* 提交按钮 */}
               <div className="form-actions">
                 <button
                   type="submit"

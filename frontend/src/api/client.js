@@ -10,11 +10,14 @@ const BASE_URL = "http://127.0.0.1:8000";
  */
 async function request(path, options = {}) {
   const response = await fetch(`${BASE_URL}${path}`, {
+    ...options,
+
+    // 注意：headers 要放在 ...options 后面再单独合并
+    // 这样就不会被 options.headers 整体覆盖掉
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-    ...options,
   });
 
   // 如果接口返回失败，就抛出错误
@@ -43,9 +46,12 @@ export function getPostBySlug(slug) {
 /**
  * 创建文章
  */
-export function createPost(data) {
+export function createPost(data, adminSecret) {
   return request("/posts/", {
     method: "POST",
+    headers: {
+      "X-Admin-Secret": adminSecret,
+    },
     body: JSON.stringify(data),
   });
 }
