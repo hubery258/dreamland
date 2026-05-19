@@ -1,8 +1,8 @@
 // src/api/client.js
 
-// 后端 API 基础地址
-// 开发环境下，我们的 FastAPI 跑在 8000 端口
-const BASE_URL = "http://127.0.0.1:8000";
+// Vite 的环境变量必须以 VITE_ 开头
+// 开发时默认指向本地 FastAPI
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 /**
  * 通用请求函数

@@ -28,3 +28,9 @@ Thumbs.db
 # Logs
 # -------------------
 *.log
+
+# env files
+backend/.env
+frontend/.env
+frontend/.env.development
+frontend/.env.production

@@ -4,10 +4,14 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 import os
 
 from .database import engine, Base
 from .routers import posts, tags, site
+
+# 读取 backend/.env
+load_dotenv()
 
 # 创建数据库表
 # 第一次运行时会自动建表
@@ -23,9 +27,12 @@ app = FastAPI(
 # 配置跨域
 # 因为前端 React 会在另一个端口运行（例如 5173）
 # 所以后端必须允许前端跨域访问
+cors_origins = os.getenv("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173")
+allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 开发阶段先全部允许，之后部署可以改成指定域名
+    allow_origins=allowed_origins,  # 开发阶段先全部允许，之后部署可以改成指定域名
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

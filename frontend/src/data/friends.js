@@ -14,7 +14,7 @@ const friends = [
     id: 1,
     name: "Chenのhomepage",
     description: "yzgg tql",
-    url: "https://yanzhuchen0901.github.io/",
+    url: "https://Bamb0oChen.github.io/",
     avatar: "https://s41.ax1x.com/2026/03/14/peEcPHK.png",
   },
   {

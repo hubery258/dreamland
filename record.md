@@ -527,3 +527,169 @@ npm install react-icons
 ## 新增 Friends 页面
 
 ### `frontend/src/pages/FriendsPage.jsx`
+
+
+## 后端加入管理员密钥配置
+
+我们先在后端写一个固定的管理员密钥读取方式。  
+首版先直接写在代码里也行，但更推荐你用**环境变量**。
+
+### 修改 `backend/app/main.py`
+
+## 让发帖接口校验管理员密钥
+
+### 修改 `backend/app/routers/posts.py`
+
+## 先在本地设置环境变量
+
+这是关键一步。  
+因为后端现在会读取：
+
+```bash
+ADMIN_SECRET
+```
+
+### Windows PowerShell 临时设置方法
+
+你在启动后端前，先执行：
+
+```powershell
+$env:ADMIN_SECRET="your-super-secret-key"
+```
+
+例如：
+
+```powershell
+$env:ADMIN_SECRET="ramenboy-admin-2025"
+```
+
+然后再启动后端：
+
+```powershell
+uvicorn app.main:app --reload
+```
+
+### 注意
+这个设置是**当前终端会话临时生效**。  
+你关掉终端就没了。
+
+这在开发阶段完全没问题。
+
+## 先测试后端有没有读到密钥
+
+启动后端后，打开：
+
+```text
+http://127.0.0.1:8000/admin/check
+```
+
+如果看到：
+
+```json
+{
+  "admin_secret_configured": true
+}
+```
+
+说明后端已经成功读到密钥。
+
+如果是 `false`，说明你环境变量没设置成功。
+
+---
+
+## 前端请求封装要支持管理员密钥
+
+现在我们要让前端发帖时，在请求头里加上：
+
+```http
+X-Admin-Secret: 你输入的密钥
+```
+
+### 修改 `frontend/src/api/client.js`
+
+## 前端发帖页增加密钥输入框
+
+### 修改 `frontend/src/pages/NewPostPage.jsx`
+
+## 怎么测试这套管理员保护
+
+### 先启动后端前设置密钥
+
+```powershell
+$env:ADMIN_SECRET="ramenboy-admin-2025"
+uvicorn app.main:app --reload
+```
+
+### 验证后端确实读到了密钥
+打开：
+
+```text
+http://127.0.0.1:8000/admin/check
+```
+
+应该看到：
+
+```json
+{
+  "admin_secret_configured": true
+}
+```
+
+### 打开发帖页
+```text
+http://localhost:5173/admin/new
+```
+
+你会看到页面最上方多了一个：
+
+- 管理员密钥 Admin Secret
+
+## 部署前准备 
+
+### 1）前端：把 API 地址改成环境变量
+
+#### 改 `frontend/src/api/client.js`
+
+#### 新建 `frontend/.env.development`
+
+#### 新建 `frontend/.env.example`
+
+### 2）后端：把 CORS 改成环境变量
+
+#### 新建 `backend/.env.example`
+
+#### 修改 `backend/app/main.py`
+
+### 3）补一个 `.gitignore`
+
+如果你还没有把 `.env` 忽略掉，建议加上：
+
+#### 根目录 `.gitignore` 追加
+
+
+### 4）本地怎么跑
+
+在 `backend/` 下：
+
+```powershell
+pip install -r requirements.txt
+```
+
+然后新建 `backend/.env`：
+
+```env
+ADMIN_SECRET=ramenboy-admin-2025
+CORS_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
+```
+
+启动：
+
+```powershell
+uvicorn app.main:app --reload
+```
+
+前端,在 `frontend/` 下：
+
+```bash
+npm run dev
+```
