@@ -693,3 +693,40 @@ uvicorn app.main:app --reload
 ```bash
 npm run dev
 ```
+
+服务器部署中说明：
+在后端的`.env`中，现在我们先用 IP 部署，所以先写 IP。
+
+以后切域名时再改成：
+
+```env
+CORS_ORIGINS=https://ramenboy.cc,https://blog.ramenboy.cc
+```
+
+以后怎么管理这个服务
+- 查看状态
+```bash
+sudo systemctl status dreamland-backend
+```
+
+- 重启服务
+```bash
+sudo systemctl restart dreamland-backend
+```
+
+- 停止服务
+```bash
+sudo systemctl stop dreamland-backend
+```
+
+- 查看日志
+
+```bash
+sudo journalctl -u dreamland-backend -n 50
+```
+
+- 持续看日志：
+
+```bash
+sudo journalctl -u dreamland-backend -f
+```
