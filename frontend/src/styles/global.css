@@ -986,3 +986,40 @@ p {
     height: 60px;
   }
 }
+
+/* ------------------------------
+   页脚备案号
+   ------------------------------ */
+
+.site-footer {
+  border-top: 1px solid var(--border-color);
+  margin-top: 40px;
+}
+
+.site-footer-inner {
+  width: min(100% - 80px, var(--site-max-width));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+  text-align: center;
+}
+
+.beian-link {
+  color: var(--muted-color);
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.beian-link:hover {
+  color: #6f6a65;
+}
+
+@media (max-width: 768px) {
+  .site-footer-inner {
+    width: min(100% - 32px, var(--site-max-width));
+    padding: 20px 0 32px;
+  }
+
+  .beian-link {
+    font-size: 13px;
+  }
+}
