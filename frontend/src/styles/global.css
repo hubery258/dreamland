@@ -1023,3 +1023,9 @@ p {
     font-size: 13px;
   }
 }
+
+.post-comments-section {
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border-color);
+}
