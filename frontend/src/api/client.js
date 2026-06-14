@@ -1,8 +1,9 @@
 // src/api/client.js
 
 // Vite 的环境变量必须以 VITE_ 开头
-// 开发时默认指向本地 FastAPI
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+// 开发时指向本地 FastAPI（在 .env.development 中配置）
+// 容器化部署时为空字符串 → 使用相对路径，由 Nginx 统一代理
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 /**
  * 通用请求函数

@@ -1,0 +1,16 @@
+# 依赖目录（几百 MB，容器内用 npm install 重新安装）
+node_modules/
+
+# 构建产物（Dockerfile 内自己 npm run build）
+dist/
+
+# 环境变量
+.env
+.env.development
+
+# Git
+.git/
+.gitignore
+
+# 编辑器
+.vscode/
