@@ -221,12 +221,10 @@ def update_site_meta(db: Session, meta_data: schemas.SiteMetaUpdate):
 # ----------------------------
 # Auth 相关
 # ----------------------------
-from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+import bcrypt
 import os
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("JWT_SECRET", "dreamland-secret-key-change-me")
 ALGORITHM = "HS256"
@@ -234,11 +232,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 小时
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
 
 def create_access_token(data: dict) -> str:
