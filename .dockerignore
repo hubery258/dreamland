@@ -1,9 +1,0 @@
-# 全局排除规则（后端和前端子目录也有各自的 .dockerignore）
-**/node_modules/
-**/venv/
-**/.git/
-**/__pycache__/
-**/*.pyc
-**/dist/
-*.md
-.gitignore

@@ -24,20 +24,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 配置跨域（仅开发模式需要）
-# 容器化部署时 Nginx 统一代理前后端，不存在跨域问题
-# 设置环境变量 DISABLE_CORS=true 可跳过 CORS 中间件
-if os.getenv("DISABLE_CORS", "").lower() != "true":
-    cors_origins = os.getenv("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173")
-    allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
+# 配置跨域
+# 因为前端 React 会在另一个端口运行（例如 5173）
+# 所以后端必须允许前端跨域访问
+cors_origins = os.getenv("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173")
+allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=allowed_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,  # 开发阶段先全部允许，之后部署可以改成指定域名
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 注册路由
 app.include_router(posts.router)
