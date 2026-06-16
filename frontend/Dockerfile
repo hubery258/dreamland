@@ -16,6 +16,10 @@ RUN npm install
 
 # 再复制源码并构建
 COPY . .
+
+# 容器内 API 走同源（Nginx 代理），不需要直连后端
+ENV VITE_API_BASE_URL=""
+
 RUN npm run build
 
 # ---------- 阶段 2：运行 ----------
