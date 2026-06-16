@@ -9,12 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # SQLite 数据库地址
-# 容器化部署时 blog.db 在 data/ 目录下（通过 volume 挂载持久化）
-# 本地开发时 data/ 下也会自动创建
-import os
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
-os.makedirs(DATA_DIR, exist_ok=True)
-DATABASE_URL = f"sqlite:///{os.path.join(DATA_DIR, 'blog.db')}"
+# 这里会在 backend 目录下生成一个 blog.db 文件
+DATABASE_URL = "sqlite:///./blog.db"
 
 # connect_args={"check_same_thread": False} 是 SQLite 常见配置
 # 因为 FastAPI 运行时可能会有多线程访问
