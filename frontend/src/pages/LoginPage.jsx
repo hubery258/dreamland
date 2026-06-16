@@ -25,6 +25,7 @@ function LoginPage() {
       const data = await login(username.trim(), password);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("username", data.username);
+      window.dispatchEvent(new Event("auth-change"));
       navigate("/");
     } catch (err) {
       setError("登录失败：" + (err.message || "用户名或密码错误"));

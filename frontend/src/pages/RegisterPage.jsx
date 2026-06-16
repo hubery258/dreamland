@@ -36,6 +36,7 @@ function RegisterPage() {
       const data = await login(username.trim(), password);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("username", data.username);
+      window.dispatchEvent(new Event("auth-change"));
       navigate("/");
     } catch (err) {
       setError("注册失败：" + (err.message || "请重试"));

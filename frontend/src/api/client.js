@@ -40,7 +40,9 @@ export function getPosts() {
  * 获取单篇文章
  */
 export function getPostBySlug(slug) {
-  return request(`/posts/${encodeURIComponent(slug)}`);
+  return request(`/posts/${encodeURIComponent(slug)}`, {
+    headers: getAuthHeaders(),
+  });
 }
 
 /**

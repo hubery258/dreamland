@@ -5,21 +5,23 @@ import { useState, useEffect } from "react";
 
 function Header() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState(localStorage.getItem("username"));
+  const [username, setUsername] = useState(() => localStorage.getItem("username"));
 
-  // 监听登录状态变化
   useEffect(() => {
-    const check = () => setUsername(localStorage.getItem("username"));
-    window.addEventListener("storage", check);
-    return () => window.removeEventListener("storage", check);
+    const sync = () => setUsername(localStorage.getItem("username"));
+    window.addEventListener("auth-change", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("auth-change", sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    setUsername(null);
+    window.dispatchEvent(new Event("auth-change"));
     navigate("/");
-    window.location.reload();
   }
 
   return (
