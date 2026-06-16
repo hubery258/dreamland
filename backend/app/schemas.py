@@ -57,6 +57,10 @@ class PostRead(BaseModel):
     created_at: datetime
     updated_at: datetime
     tags: List[TagRead] = []
+    like_count: int = 0
+    favorite_count: int = 0
+    liked: bool = False
+    favorited: bool = False
 
     class Config:
         from_attributes = True
@@ -74,6 +78,47 @@ class PostListItem(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ----------------------------
+# Auth 相关
+# ----------------------------
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    username: str
+
+
+class UserRead(BaseModel):
+    id: int
+    username: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ----------------------------
+# 点赞 / 收藏 响应
+# ----------------------------
+class LikeStatus(BaseModel):
+    liked: bool
+    like_count: int
+
+
+class FavoriteStatus(BaseModel):
+    favorited: bool
+    favorite_count: int
 
 
 # ----------------------------

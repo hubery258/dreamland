@@ -86,3 +86,55 @@ export function updateAbout(data) {
     body: JSON.stringify(data),
   });
 }
+
+// ============================
+// Auth 相关
+// ============================
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export function register(username, password) {
+  return request("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+}
+
+export function login(username, password) {
+  return request("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+  });
+}
+
+export function getMe() {
+  return request("/auth/me", {
+    headers: getAuthHeaders(),
+  });
+}
+
+export function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
+}
+
+// ============================
+// 点赞 & 收藏
+// ============================
+
+export function toggleLike(slug) {
+  return request(`/posts/${encodeURIComponent(slug)}/like`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+  });
+}
+
+export function toggleFavorite(slug) {
+  return request(`/posts/${encodeURIComponent(slug)}/favorite`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+  });
+}

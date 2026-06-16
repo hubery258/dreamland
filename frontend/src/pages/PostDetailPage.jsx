@@ -4,7 +4,7 @@ import Giscus from "@giscus/react";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { getPostBySlug } from "../api/client";
+import { getPostBySlug, toggleLike, toggleFavorite } from "../api/client";
 import PageTitle from "../components/PageTitle";
 
 /**
@@ -91,6 +91,36 @@ function PostDetailPage() {
             ))}
           </div>
         )}
+
+        {/* 点赞 & 收藏按钮 */}
+        <div className="post-actions-row">
+          <button
+            className={`action-btn ${post.liked ? "action-btn-active" : ""}`}
+            onClick={async () => {
+              try {
+                const res = await toggleLike(post.slug);
+                setPost({ ...post, liked: res.liked, like_count: res.like_count });
+              } catch (e) {
+                alert("请先登录");
+              }
+            }}
+          >
+            {post.liked ? "❤️" : "🤍"} {post.like_count || 0}
+          </button>
+          <button
+            className={`action-btn ${post.favorited ? "action-btn-active" : ""}`}
+            onClick={async () => {
+              try {
+                const res = await toggleFavorite(post.slug);
+                setPost({ ...post, favorited: res.favorited, favorite_count: res.favorite_count });
+              } catch (e) {
+                alert("请先登录");
+              }
+            }}
+          >
+            {post.favorited ? "⭐" : "☆"} {post.favorite_count || 0}
+          </button>
+        </div>
 
         {/* 正文区域，react-markdown 会把 Markdown 转成 HTML 结构 */}
         <article className="markdown-body">

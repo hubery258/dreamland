@@ -9,6 +9,8 @@ import TagsPage from "./pages/TagsPage";
 import AboutPage from "./pages/AboutPage";
 import NewPostPage from "./pages/NewPostPage";
 import FriendsPage from "./pages/FriendsPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -23,6 +25,9 @@ function App() {
         <Route path="about" element={<AboutPage />} />
 
         <Route path="admin/new" element={<NewPostPage />} />
+
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
       </Route>
     </Routes>
   );

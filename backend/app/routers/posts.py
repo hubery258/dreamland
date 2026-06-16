@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 import os
 
 from ..database import get_db
-from .. import crud, schemas
+from .. import crud, schemas, models
+from .auth import get_current_user, require_user
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
@@ -54,14 +55,61 @@ def create_new_post(
 
 
 @router.get("/{slug}", response_model=schemas.PostRead)
-def get_single_post(slug: str, db: Session = Depends(get_db)):
+def get_single_post(
+    slug: str,
+    db: Session = Depends(get_db),
+    current_user: models.User | None = Depends(get_current_user)
+):
     """
-    获取单篇文章详情
+    获取单篇文章详情（含点赞/收藏状态）
     """
     db_post = crud.get_post_by_slug(db, slug)
     if not db_post:
         raise HTTPException(status_code=404, detail="文章不存在")
-    return db_post
+
+    # 注入点赞/收藏状态
+    user_id = current_user.id if current_user else None
+    liked, like_count = crud.get_like_status(db, user_id, db_post.id)
+    favorited, favorite_count = crud.get_favorite_status(db, user_id, db_post.id)
+
+    result = schemas.PostRead.model_validate(db_post)
+    result.liked = liked
+    result.like_count = like_count
+    result.favorited = favorited
+    result.favorite_count = favorite_count
+    return result
+
+
+# ----------------------------
+# 点赞
+# ----------------------------
+@router.post("/{slug}/like", response_model=schemas.LikeStatus)
+def like_post(
+    slug: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_user)
+):
+    """点赞 / 取消点赞"""
+    result = crud.toggle_like(db, current_user, slug)
+    if result is None:
+        raise HTTPException(status_code=404, detail="文章不存在")
+    return result
+
+
+# ----------------------------
+# 收藏
+# ----------------------------
+@router.post("/{slug}/favorite", response_model=schemas.FavoriteStatus)
+def favorite_post(
+    slug: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(require_user)
+):
+    """收藏 / 取消收藏"""
+    result = crud.toggle_favorite(db, current_user, slug)
+    if result is None:
+        raise HTTPException(status_code=404, detail="文章不存在")
+    return result
 
 
 @router.put("/{slug}", response_model=schemas.PostRead)

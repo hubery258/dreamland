@@ -4,3 +4,6 @@ sqlalchemy
 pydantic
 python-slugify
 python-dotenv
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt

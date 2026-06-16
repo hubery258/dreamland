@@ -216,3 +216,151 @@ def update_site_meta(db: Session, meta_data: schemas.SiteMetaUpdate):
     db.refresh(meta)
 
     return meta
+
+
+# ----------------------------
+# Auth 相关
+# ----------------------------
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+import os
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+SECRET_KEY = os.getenv("JWT_SECRET", "dreamland-secret-key-change-me")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 小时
+
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
+
+
+def create_access_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+
+
+def create_user(db: Session, user_data: schemas.UserCreate) -> models.User:
+    hashed = hash_password(user_data.password)
+    db_user = models.User(username=user_data.username, password_hash=hashed)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def authenticate_user(db: Session, username: str, password: str):
+    user = get_user_by_username(db, username)
+    if not user or not verify_password(password, user.password_hash):
+        return None
+    return user
+
+
+# ----------------------------
+# 点赞相关
+# ----------------------------
+def toggle_like(db: Session, user: models.User, slug: str):
+    post = db.query(models.Post).filter(models.Post.slug == slug).first()
+    if not post:
+        return None
+
+    existing = db.query(models.post_likes).filter(
+        models.post_likes.c.user_id == user.id,
+        models.post_likes.c.post_id == post.id
+    ).first()
+
+    if existing:
+        db.execute(
+            models.post_likes.delete().where(
+                models.post_likes.c.user_id == user.id,
+                models.post_likes.c.post_id == post.id
+            )
+        )
+        db.commit()
+        liked = False
+    else:
+        db.execute(
+            models.post_likes.insert().values(user_id=user.id, post_id=post.id)
+        )
+        db.commit()
+        liked = True
+
+    like_count = db.query(models.post_likes).filter(
+        models.post_likes.c.post_id == post.id
+    ).count()
+
+    return {"liked": liked, "like_count": like_count}
+
+
+def get_like_status(db: Session, user_id: int | None, post_id: int):
+    liked = False
+    if user_id:
+        liked = db.query(models.post_likes).filter(
+            models.post_likes.c.user_id == user_id,
+            models.post_likes.c.post_id == post_id
+        ).first() is not None
+    like_count = db.query(models.post_likes).filter(
+        models.post_likes.c.post_id == post_id
+    ).count()
+    return liked, like_count
+
+
+# ----------------------------
+# 收藏相关
+# ----------------------------
+def toggle_favorite(db: Session, user: models.User, slug: str):
+    post = db.query(models.Post).filter(models.Post.slug == slug).first()
+    if not post:
+        return None
+
+    existing = db.query(models.user_favorites).filter(
+        models.user_favorites.c.user_id == user.id,
+        models.user_favorites.c.post_id == post.id
+    ).first()
+
+    if existing:
+        db.execute(
+            models.user_favorites.delete().where(
+                models.user_favorites.c.user_id == user.id,
+                models.user_favorites.c.post_id == post.id
+            )
+        )
+        db.commit()
+        favorited = False
+    else:
+        db.execute(
+            models.user_favorites.insert().values(user_id=user.id, post_id=post.id)
+        )
+        db.commit()
+        favorited = True
+
+    favorite_count = db.query(models.user_favorites).filter(
+        models.user_favorites.c.post_id == post.id
+    ).count()
+
+    return {"favorited": favorited, "favorite_count": favorite_count}
+
+
+def get_favorite_status(db: Session, user_id: int | None, post_id: int):
+    favorited = False
+    if user_id:
+        favorited = db.query(models.user_favorites).filter(
+            models.user_favorites.c.user_id == user_id,
+            models.user_favorites.c.post_id == post_id
+        ).first() is not None
+    favorite_count = db.query(models.user_favorites).filter(
+        models.user_favorites.c.post_id == post_id
+    ).count()
+    return favorited, favorite_count

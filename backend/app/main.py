@@ -38,10 +38,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from .routers import auth
+
 # 注册路由
 app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(site.router)
+app.include_router(auth.router)
 
 
 @app.get("/")

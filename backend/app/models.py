@@ -50,6 +50,12 @@ class Post(Base):
     # 与 Tag 的多对多关系
     tags = relationship("Tag", secondary=post_tags, back_populates="posts")
 
+    # 点赞用户
+    liked_by = relationship("User", secondary="post_likes", backref="liked_posts")
+
+    # 收藏用户
+    favorited_by = relationship("User", secondary="user_favorites", backref="favorited_posts")
+
 
 # ----------------------------
 # 标签表
@@ -64,6 +70,39 @@ class Tag(Base):
 
     # 反向关系：一个 tag 可以关联多篇文章
     posts = relationship("Post", secondary=post_tags, back_populates="tags")
+
+
+# ----------------------------
+# 用户表
+# ----------------------------
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# ----------------------------
+# 多对多中间表：用户 <-> 点赞文章
+# ----------------------------
+post_likes = Table(
+    "post_likes",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("post_id", Integer, ForeignKey("posts.id"), primary_key=True)
+)
+
+# ----------------------------
+# 多对多中间表：用户 <-> 收藏文章
+# ----------------------------
+user_favorites = Table(
+    "user_favorites",
+    Base.metadata,
+    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("post_id", Integer, ForeignKey("posts.id"), primary_key=True)
+)
 
 
 # ----------------------------
