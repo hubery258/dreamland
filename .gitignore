@@ -34,3 +34,5 @@ backend/.env
 frontend/.env
 frontend/.env.development
 frontend/.env.production
+new.md
+UPDATE_PLAN.local.md

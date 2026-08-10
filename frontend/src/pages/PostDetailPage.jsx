@@ -1,15 +1,10 @@
-// src/pages/PostDetailPage.jsx
-
 import Giscus from "@giscus/react";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import { getPostBySlug } from "../api/client";
+import { getPostBySlug, getPostNeighbors } from "../api/client";
 import PageTitle from "../components/PageTitle";
 
-/**
- * 把日期格式化成更适合显示的形式
- */
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
@@ -19,12 +14,16 @@ function formatDate(dateString) {
   });
 }
 
-function PostDetailPage() {
-  // 从 URL 中获取 slug，例如 /posts/我的第一篇文章
-  const { slug } = useParams();
+function wasEdited(post) {
+  const createdAt = new Date(post.created_at).getTime();
+  const updatedAt = new Date(post.updated_at).getTime();
+  return Number.isFinite(createdAt) && Number.isFinite(updatedAt) && updatedAt - createdAt > 60000;
+}
 
-  // state管理
+function PostDetailPage() {
+  const { slug } = useParams();
   const [post, setPost] = useState(null);
+  const [neighbors, setNeighbors] = useState({ older: null, newer: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,10 +32,12 @@ function PostDetailPage() {
       try {
         setLoading(true);
         setError("");
-
-        // 获取后端数据的函数保存在client.js中
-        const data = await getPostBySlug(slug);
-        setPost(data);
+        const [postData, neighborData] = await Promise.all([
+          getPostBySlug(slug),
+          getPostNeighbors(slug),
+        ]);
+        setPost(postData);
+        setNeighbors(neighborData);
       } catch (err) {
         console.error("获取文章详情失败:", err);
         setError("文章加载失败，可能是文章不存在，或者后端未启动。");
@@ -68,36 +69,67 @@ function PostDetailPage() {
     );
   }
 
-  if (!post) {
-    return null;
-  }
+  if (!post) return null;
 
   return (
     <section className="page-section">
       <div className="content-width">
-        {/* 顶部元信息 + 大标题 */}
         <PageTitle
           eyebrow={`Written by hubery on ${formatDate(post.created_at)}`}
           title={post.title}
         />
 
-        {/* 标签区 */}
+        {wasEdited(post) && (
+          <p className="post-updated-at">
+            Last changed on {formatDate(post.updated_at)}
+          </p>
+        )}
+
         {post.tags && post.tags.length > 0 && (
           <div className="post-tags-row">
             {post.tags.map((tag) => (
-              <Link key={tag.id} to={`/tags?tag=${encodeURIComponent(tag.name)}`} className="tag-pill">
+              <Link
+                key={tag.id}
+                to={`/tags?tag=${encodeURIComponent(tag.name)}`}
+                className="tag-pill"
+              >
                 {tag.name}
               </Link>
             ))}
           </div>
         )}
 
-        {/* 正文区域，react-markdown 会把 Markdown 转成 HTML 结构 */}
         <article className="markdown-body">
           <ReactMarkdown>{post.content}</ReactMarkdown>
         </article>
+
+        <nav className="post-neighbors" aria-label="Adjacent posts">
+          <div className="post-neighbor post-neighbor-older">
+            {neighbors.older && (
+              <Link to={`/posts/${neighbors.older.slug}`}>
+                <span>← Older Post</span>
+                <strong>{neighbors.older.title}</strong>
+              </Link>
+            )}
+          </div>
+          <div className="post-neighbor post-neighbor-newer">
+            {neighbors.newer && (
+              <Link to={`/posts/${neighbors.newer.slug}`}>
+                <span>Newer Post →</span>
+                <strong>{neighbors.newer.title}</strong>
+              </Link>
+            )}
+          </div>
+        </nav>
+
+        <div className="post-admin-actions">
+          <Link to={`/admin/edit/${post.slug}`} className="post-edit-link">
+            Edit this post
+          </Link>
+        </div>
+
         <div className="post-comments-section">
-          <Giscus 
+          <Giscus
             id="comment"
             repo="hubery258/dreamland"
             repoId="R_kgDOSaFIOw"

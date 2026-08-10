@@ -76,6 +76,20 @@ class PostListItem(BaseModel):
         from_attributes = True
 
 
+class PostNeighbor(BaseModel):
+    title: str
+    slug: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class PostNeighbors(BaseModel):
+    older: Optional[PostNeighbor] = None
+    newer: Optional[PostNeighbor] = None
+
+
 # ----------------------------
 # About / SiteMeta 相关
 # ----------------------------

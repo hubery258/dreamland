@@ -23,7 +23,9 @@ async function request(path, options = {}) {
   // 如果接口返回失败，就抛出错误
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "请求失败");
+    const error = new Error(errorText || "请求失败");
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
@@ -44,11 +46,31 @@ export function getPostBySlug(slug) {
 }
 
 /**
+ * 获取当前文章在发布时间上的相邻文章
+ */
+export function getPostNeighbors(slug) {
+  return request(`/posts/${encodeURIComponent(slug)}/neighbors`);
+}
+
+/**
  * 创建文章
  */
 export function createPost(data, adminSecret) {
   return request("/posts/", {
     method: "POST",
+    headers: {
+      "X-Admin-Secret": adminSecret,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * 更新文章
+ */
+export function updatePost(slug, data, adminSecret) {
+  return request(`/posts/${encodeURIComponent(slug)}`, {
+    method: "PUT",
     headers: {
       "X-Admin-Secret": adminSecret,
     },

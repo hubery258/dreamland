@@ -1,0 +1,38 @@
+{
+  "albums": [
+    {
+      "id": "travel",
+      "title": "Travel",
+      "description": "旅行记录"
+    }
+  ],
+  "photos": [
+    {
+      "id": "chengdu-2026-01",
+      "albumId": "travel",
+      "src": "https://s41.ax1x.com/2026/03/29/pe1zHmV.jpg",
+      "thumbnail": "https://s41.ax1x.com/2026/03/29/pe1zHmV.jpg",
+      "submittedAt": "2026-08-10T10:00:00+08:00",
+      "note": "照片备注",
+      "alt": "图片替代文字"
+    },
+    {
+      "id": "random-01",
+      "albumId": null,
+      "src": "https://s41.ax1x.com/2026/03/14/peElFDP.jpg",
+      "thumbnail": "https://s41.ax1x.com/2026/03/14/peElFDP.jpg",
+      "submittedAt": "2026-08-09T16:30:00+08:00",
+      "note": "未分类照片的test",
+      "alt": "图片替代文字"
+    },
+    {
+      "id": "test",
+      "albumId": null,
+      "src": "https://xxx/xx.jpg",
+      "thumbnail": "https://xxx/xx.jpg",
+      "submittedAt": "2026-08-09T16:30:00+08:00",
+      "note": "没有图片的test",
+      "alt": "文字"
+    }
+  ]
+}
