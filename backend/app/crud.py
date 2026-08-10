@@ -4,6 +4,9 @@
 # 路由层只负责接收请求、返回响应
 # 数据库增删改查细节尽量放在这里，结构更清楚
 
+from datetime import datetime
+
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 from slugify import slugify
 
@@ -106,6 +109,33 @@ def get_post_by_slug(db: Session, slug: str):
     return db.query(models.Post).filter(models.Post.slug == slug).first()
 
 
+def get_post_neighbors(db: Session, post: models.Post):
+    """按发布时间查找相邻文章，置顶状态不参与这里的顺序。"""
+    older = (
+        db.query(models.Post)
+        .filter(
+            or_(
+                models.Post.created_at < post.created_at,
+                and_(models.Post.created_at == post.created_at, models.Post.id < post.id),
+            )
+        )
+        .order_by(models.Post.created_at.desc(), models.Post.id.desc())
+        .first()
+    )
+    newer = (
+        db.query(models.Post)
+        .filter(
+            or_(
+                models.Post.created_at > post.created_at,
+                and_(models.Post.created_at == post.created_at, models.Post.id > post.id),
+            )
+        )
+        .order_by(models.Post.created_at.asc(), models.Post.id.asc())
+        .first()
+    )
+    return {"older": older, "newer": newer}
+
+
 def update_post(db: Session, slug: str, post_data: schemas.PostUpdate):
     """
     更新文章
@@ -129,6 +159,9 @@ def update_post(db: Session, slug: str, post_data: schemas.PostUpdate):
     if post_data.tags is not None:
         db_post.tags = get_or_create_tags(db, post_data.tags)
 
+    # 关系字段单独变化时 SQLAlchemy 不一定触发 Column.onupdate，
+    # 因此在编辑操作中显式记录最后修改时间。
+    db_post.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(db_post)
 

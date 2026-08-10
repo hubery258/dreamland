@@ -2,6 +2,10 @@
 
 import { Link, NavLink } from "react-router-dom";
 
+function navClassName({ isActive }) {
+  return isActive ? "nav-link nav-link-active" : "nav-link";
+}
+
 function Header() {
   return (
     <header className="site-header">
@@ -10,34 +14,27 @@ function Header() {
           Dreamland
         </Link>
 
-        <nav className="site-nav">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              isActive ? "nav-link nav-link-active" : "nav-link"
-            }
-          >
+        <nav className="site-nav" aria-label="Main navigation">
+          <NavLink to="/" end className={navClassName}>
             Posts
           </NavLink>
-
-          <NavLink
-            to="/tags"
-            className={({ isActive }) =>
-              isActive ? "nav-link nav-link-active" : "nav-link"
-            }
-          >
+          <NavLink to="/tags" className={navClassName}>
             Tags
           </NavLink>
-
-          <NavLink
-            to="/friends"
-            className={({ isActive }) =>
-              isActive ? "nav-link nav-link-active" : "nav-link"
-            }
-          >
+          <NavLink to="/gallery" className={navClassName}>
+            Gallery
+          </NavLink>
+          <NavLink to="/friends" className={navClassName}>
             Friends
           </NavLink>
+          <a
+            href="https://note.ramenboy.cc"
+            className="nav-link"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Note
+          </a>
         </nav>
       </div>
     </header>
