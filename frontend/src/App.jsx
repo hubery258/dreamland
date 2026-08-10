@@ -7,6 +7,7 @@ import AboutPage from "./pages/AboutPage";
 import FriendsPage from "./pages/FriendsPage";
 import GalleryPage from "./pages/GalleryPage";
 import HomePage from "./pages/HomePage";
+import GalleryAdminPage from "./pages/GalleryAdminPage";
 import NewPostPage from "./pages/NewPostPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import TagsPage from "./pages/TagsPage";
@@ -26,6 +27,7 @@ function App() {
         <Route path="about" element={<AboutPage />} />
 
         <Route path="admin/new" element={<NewPostPage />} />
+        <Route path="admin/gallery" element={<GalleryAdminPage />} />
         <Route path="admin/edit/:slug" element={<NewPostPage />} />
       </Route>
     </Routes>

@@ -79,3 +79,32 @@ class SiteMeta(Base):
 
     # About 页内容，支持 Markdown
     about_content = Column(Text, default="这里写你的自我介绍。")
+
+# ----------------------------
+# Gallery：相册与照片
+# ----------------------------
+class Album(Base):
+    __tablename__ = "albums"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(255), unique=True, index=True, nullable=False)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, default="")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    photos = relationship("Photo", back_populates="album")
+
+
+class Photo(Base):
+    __tablename__ = "photos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    album_id = Column(Integer, ForeignKey("albums.id"), nullable=True, index=True)
+    image_url = Column(Text, nullable=False)
+    thumbnail_url = Column(Text, default="")
+    note = Column(Text, default="")
+    alt = Column(String(500), default="")
+    submitted_at = Column(DateTime, default=datetime.utcnow, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    album = relationship("Album", back_populates="photos")

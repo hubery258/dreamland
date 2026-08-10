@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { getGallery } from "../api/client";
 import PageTitle from "../components/PageTitle";
-import galleryData from "../data/gallery.json";
+
+function apiDate(dateString) {
+  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(dateString);
+  return new Date(hasTimezone ? dateString : `${dateString}Z`);
+}
 
 function timestamp(photo) {
-  const value = new Date(photo.submittedAt).getTime();
+  const value = apiDate(photo.submitted_at).getTime();
   return Number.isNaN(value) ? 0 : value;
 }
 
 function formatDate(dateString) {
-  const date = new Date(dateString);
+  const date = apiDate(dateString);
   if (Number.isNaN(date.getTime())) return dateString || "Date unknown";
   return date.toLocaleString("en-US", {
     year: "numeric",
@@ -36,7 +41,7 @@ function PhotoGrid({ photos, onSelect }) {
           aria-label={`View ${photo.alt || photo.note || "photo"}`}
         >
           <img
-            src={photo.thumbnail || photo.src}
+            src={photo.thumbnail_url || photo.image_url}
             alt={photo.alt || ""}
             loading="lazy"
           />
@@ -74,12 +79,7 @@ function PhotoModal({ photo, onClose }) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div
-        className="gallery-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Photo details"
-      >
+      <div className="gallery-modal" role="dialog" aria-modal="true" aria-label="Photo details">
         <button
           type="button"
           className="gallery-modal-close"
@@ -89,11 +89,11 @@ function PhotoModal({ photo, onClose }) {
           ×
         </button>
         <div className="gallery-modal-image-wrap">
-          <img src={photo.src} alt={photo.alt || ""} />
+          <img src={photo.image_url} alt={photo.alt || ""} />
         </div>
         <aside className="gallery-modal-details">
           <p className="gallery-modal-label">Submitted</p>
-          <time dateTime={photo.submittedAt}>{formatDate(photo.submittedAt)}</time>
+          <time dateTime={photo.submitted_at}>{formatDate(photo.submitted_at)}</time>
           <div className="gallery-modal-divider" />
           <p className="gallery-modal-label">Note</p>
           <p className="gallery-modal-note">{photo.note || "No note for this moment."}</p>
@@ -105,22 +105,55 @@ function PhotoModal({ photo, onClose }) {
 
 function GalleryPage() {
   const { albumId } = useParams();
+  const [gallery, setGallery] = useState({ albums: [], photos: [] });
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const albums = Array.isArray(galleryData.albums) ? galleryData.albums : [];
-  const photos = Array.isArray(galleryData.photos) ? galleryData.photos : [];
+  useEffect(() => {
+    async function loadGallery() {
+      try {
+        setLoading(true);
+        setError("");
+        setGallery(await getGallery());
+      } catch (err) {
+        console.error("画廊加载失败:", err);
+        setError("Gallery 加载失败，请检查后端是否启动。");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadGallery();
+  }, []);
 
+  const albums = gallery.albums || [];
+  const photos = gallery.photos || [];
   const albumCards = albums.map((album) => {
     const albumPhotos = photos
-      .filter((photo) => photo.albumId === album.id)
+      .filter((photo) => photo.album_id === album.id)
       .sort((a, b) => timestamp(a) - timestamp(b));
     return { ...album, photos: albumPhotos, cover: albumPhotos[0] || null };
   });
-
-  const activeAlbum = albumCards.find((album) => album.id === albumId);
+  const activeAlbum = albumCards.find((album) => album.slug === albumId);
   const unclassifiedPhotos = photos
-    .filter((photo) => !photo.albumId)
+    .filter((photo) => photo.album_id === null)
     .sort((a, b) => timestamp(b) - timestamp(a));
+
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="content-width"><p className="muted-text">Loading gallery...</p></div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="page-section">
+        <div className="content-width"><p className="error-text">{error}</p></div>
+      </section>
+    );
+  }
 
   if (albumId && !activeAlbum) {
     return (
@@ -140,24 +173,16 @@ function GalleryPage() {
       <div className="gallery-width">
         {activeAlbum ? (
           <>
-            <PageTitle
-              eyebrow={<Link to="/gallery">← Gallery</Link>}
-              title={activeAlbum.title}
-            />
-            {activeAlbum.description && (
-              <p className="gallery-intro">{activeAlbum.description}</p>
-            )}
-            <PhotoGrid
-              photos={[...activeAlbum.photos].reverse()}
-              onSelect={setSelectedPhoto}
-            />
+            <PageTitle eyebrow={<Link to="/gallery">← Gallery</Link>} title={activeAlbum.title} />
+            {activeAlbum.description && <p className="gallery-intro">{activeAlbum.description}</p>}
+            <PhotoGrid photos={[...activeAlbum.photos].reverse()} onSelect={setSelectedPhoto} />
           </>
         ) : (
           <>
             <PageTitle eyebrow="Life Trace" title="Gallery" />
             {photos.length === 0 && albums.length === 0 ? (
               <p className="gallery-empty muted-text">
-                The gallery is ready. Add albums and photos in the gallery data file.
+                The gallery is ready. Add your first album or photo from the management page.
               </p>
             ) : (
               <>
@@ -167,21 +192,16 @@ function GalleryPage() {
                     <PhotoGrid photos={unclassifiedPhotos} onSelect={setSelectedPhoto} />
                   </section>
                 )}
-
                 {albumCards.length > 0 && (
                   <section className="gallery-section">
                     <h2 className="gallery-section-title">Albums</h2>
                     <div className="gallery-album-grid">
                       {albumCards.map((album) => (
-                        <Link
-                          to={`/gallery/${encodeURIComponent(album.id)}`}
-                          className="gallery-album-card"
-                          key={album.id}
-                        >
+                        <Link to={`/gallery/${album.slug}`} className="gallery-album-card" key={album.id}>
                           <div className="gallery-album-cover">
                             {album.cover ? (
                               <img
-                                src={album.cover.thumbnail || album.cover.src}
+                                src={album.cover.thumbnail_url || album.cover.image_url}
                                 alt={album.cover.alt || ""}
                                 loading="lazy"
                               />
@@ -200,10 +220,12 @@ function GalleryPage() {
                 )}
               </>
             )}
+            <div className="gallery-admin-entry">
+              <Link to="/admin/gallery">Manage Gallery</Link>
+            </div>
           </>
         )}
       </div>
-
       <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} />
     </section>
   );

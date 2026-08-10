@@ -1,26 +1,13 @@
 # app/routers/posts.py
 
-import os
-
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 
 from .. import crud, schemas
+from ..auth import verify_admin_secret
 from ..database import get_db
 
 router = APIRouter(prefix="/posts", tags=["posts"])
-
-
-def verify_admin_secret(x_admin_secret: str | None):
-    """校验所有文章写操作使用的管理员密钥。"""
-    admin_secret = os.getenv("ADMIN_SECRET", "")
-    if not admin_secret:
-        raise HTTPException(
-            status_code=500,
-            detail="服务器未配置管理员密钥 ADMIN_SECRET"
-        )
-    if x_admin_secret != admin_secret:
-        raise HTTPException(status_code=401, detail="管理员密钥错误")
 
 
 @router.get("/", response_model=list[schemas.PostListItem])

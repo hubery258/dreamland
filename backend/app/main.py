@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 
 from .database import engine, Base
-from .routers import posts, tags, site
+from .routers import gallery, posts, site, tags
 
 # 读取 backend/.env
 load_dotenv()
@@ -42,6 +42,7 @@ app.add_middleware(
 app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(site.router)
+app.include_router(gallery.router)
 
 
 @app.get("/")
