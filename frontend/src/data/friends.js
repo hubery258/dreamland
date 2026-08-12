@@ -24,6 +24,13 @@ const friends = [
     url: "https://littlebanbrick.cn",
     avatar: "https://avatars.githubusercontent.com/u/245135180?v=4",
   },
+  {
+    id: 3,
+    name: "FelixFu's Craft",
+    description: "jfgg做出来功能很全面的的小站:关于cs、随笔、音乐与学习等等!",
+    url: "www.felixfu.xyz",
+    avatar: "https://www.felixfu.xyz/uploads/20260809094541-13e0eedf9b354f93b34bd16818147e9e.jpg",
+  },
 ];
 
 export default friends;
