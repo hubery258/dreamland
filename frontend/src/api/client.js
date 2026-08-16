@@ -160,3 +160,33 @@ export function deletePhoto(photoId, adminSecret) {
     headers: { "X-Admin-Secret": adminSecret },
   });
 }
+
+/**
+ * Friend links
+ */
+export function getFriends() {
+  return request("/friends/");
+}
+
+export function createFriend(data, adminSecret) {
+  return request("/friends/", {
+    method: "POST",
+    headers: { "X-Admin-Secret": adminSecret },
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateFriend(friendId, data, adminSecret) {
+  return request(`/friends/${friendId}`, {
+    method: "PUT",
+    headers: { "X-Admin-Secret": adminSecret },
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteFriend(friendId, adminSecret) {
+  return request(`/friends/${friendId}`, {
+    method: "DELETE",
+    headers: { "X-Admin-Secret": adminSecret },
+  });
+}
