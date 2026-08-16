@@ -4,18 +4,25 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import inspect
 from dotenv import load_dotenv
 import os
 
-from .database import engine, Base
-from .routers import gallery, posts, site, tags
+from .database import engine, Base, SessionLocal
+from .friends_crud import seed_friends
+from .routers import friends, gallery, posts, site, tags
 
 # 读取 backend/.env
 load_dotenv()
 
 # 创建数据库表
 # 第一次运行时会自动建表
+friend_links_existed = inspect(engine).has_table("friend_links")
 Base.metadata.create_all(bind=engine)
+
+if not friend_links_existed:
+    with SessionLocal() as db:
+        seed_friends(db)
 
 # 创建 FastAPI 实例
 app = FastAPI(
@@ -43,6 +50,7 @@ app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(site.router)
 app.include_router(gallery.router)
+app.include_router(friends.router)
 
 
 @app.get("/")
