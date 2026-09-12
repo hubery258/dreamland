@@ -108,3 +108,19 @@ class Photo(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     album = relationship("Album", back_populates="photos")
+
+
+# ----------------------------
+# Friends：友链卡片
+# ----------------------------
+class FriendLink(Base):
+    __tablename__ = "friend_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    description = Column(Text, default="")
+    url = Column(Text, nullable=False)
+    avatar = Column(Text, default="")
+    sort_order = Column(Integer, default=0, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

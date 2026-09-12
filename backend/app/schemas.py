@@ -165,3 +165,36 @@ class PhotoRead(BaseModel):
 class GalleryRead(BaseModel):
     albums: List[AlbumRead] = []
     photos: List[PhotoRead] = []
+
+
+# ----------------------------
+# Friend links 相关
+# ----------------------------
+class FriendLinkCreate(BaseModel):
+    name: str
+    description: str = ""
+    url: str
+    avatar: str = ""
+    sort_order: int = 0
+
+
+class FriendLinkUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    url: Optional[str] = None
+    avatar: Optional[str] = None
+    sort_order: Optional[int] = None
+
+
+class FriendLinkRead(BaseModel):
+    id: int
+    name: str
+    description: str
+    url: str
+    avatar: str
+    sort_order: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
