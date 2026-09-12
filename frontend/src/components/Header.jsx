@@ -35,6 +35,14 @@ function Header() {
           >
             Note
           </a>
+          <a
+            href="https://www.travellings.cn/go.html"
+            className="nav-link"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Travelling
+          </a>
         </nav>
       </div>
     </header>
