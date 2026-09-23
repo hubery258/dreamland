@@ -7,7 +7,7 @@
 from datetime import datetime
 
 from sqlalchemy import and_, or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from slugify import slugify
 
 from . import models, schemas
@@ -33,7 +33,7 @@ def get_or_create_tags(db: Session, tag_names: list[str]):
         if not tag:
             tag = models.Tag(name=name)
             db.add(tag)
-            db.flush()  # flush 后 tag 就会拿到 id
+            db.flush()
 
         tag_objects.append(tag)
 
@@ -50,7 +50,6 @@ def generate_unique_slug(db: Session, title: str):
     """
     base_slug = slugify(title, allow_unicode=True)
 
-    # 如果标题全是特殊字符，有可能 slugify 后为空
     if not base_slug:
         base_slug = "post"
 
@@ -98,6 +97,17 @@ def get_posts(db: Session):
     return (
         db.query(models.Post)
         .order_by(models.Post.is_pinned.desc(), models.Post.created_at.desc())
+        .all()
+    )
+
+
+def get_feed_posts(db: Session, limit: int):
+    """获取 RSS 专用文章窗口，不能被置顶排序影响。"""
+    return (
+        db.query(models.Post)
+        .options(joinedload(models.Post.tags))
+        .order_by(models.Post.created_at.desc(), models.Post.id.desc())
+        .limit(limit)
         .all()
     )
 
@@ -159,8 +169,6 @@ def update_post(db: Session, slug: str, post_data: schemas.PostUpdate):
     if post_data.tags is not None:
         db_post.tags = get_or_create_tags(db, post_data.tags)
 
-    # 关系字段单独变化时 SQLAlchemy 不一定触发 Column.onupdate，
-    # 因此在编辑操作中显式记录最后修改时间。
     db_post.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(db_post)
@@ -199,8 +207,6 @@ def get_posts_by_tag(db: Session, tag_name: str):
     if not tag:
         return None
 
-    # 这里直接返回这个 tag 关联的文章列表
-    # 为了前台显示更稳定，可以再手动排序一下
     posts = sorted(
         tag.posts,
         key=lambda p: (not p.is_pinned, -p.created_at.timestamp())
