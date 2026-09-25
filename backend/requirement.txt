@@ -4,3 +4,5 @@ sqlalchemy
 pydantic
 python-slugify
 python-dotenv
+markdown-it-py==4.0.0
+nh3==0.3.7

@@ -8,12 +8,12 @@ from sqlalchemy import inspect
 from dotenv import load_dotenv
 import os
 
+# 先加载环境变量，再导入数据库模块，使 DATABASE_URL 在建表前生效。
+load_dotenv()
+
 from .database import engine, Base, SessionLocal
 from .friends_crud import seed_friends
-from .routers import friends, gallery, posts, site, tags
-
-# 读取 backend/.env
-load_dotenv()
+from .routers import feed, friends, gallery, posts, site, tags
 
 # 创建数据库表
 # 第一次运行时会自动建表
@@ -32,14 +32,12 @@ app = FastAPI(
 )
 
 # 配置跨域
-# 因为前端 React 会在另一个端口运行（例如 5173）
-# 所以后端必须允许前端跨域访问
 cors_origins = os.getenv("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173")
 allowed_origins = [origin.strip() for origin in cors_origins.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,  # 开发阶段先全部允许，之后部署可以改成指定域名
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,6 +49,7 @@ app.include_router(tags.router)
 app.include_router(site.router)
 app.include_router(gallery.router)
 app.include_router(friends.router)
+app.include_router(feed.router)
 
 
 @app.get("/")
@@ -60,12 +59,11 @@ def root():
     """
     return {"message": "Blog API is running"}
 
+
 @app.get("/admin/check")
 def admin_check():
     """
-    这是一个可选测试接口：
-    用来确认后端是否读到了管理员密钥环境变量。
-    正式环境里也可以保留。
+    这是一个可选测试接口：用来确认后端是否读到了管理员密钥环境变量。
     """
     admin_key = os.getenv("ADMIN_SECRET", "")
     return {
