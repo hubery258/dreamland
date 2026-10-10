@@ -443,10 +443,19 @@ p {
 
 .markdown-body blockquote {
   margin: 1.6em 0;
-  padding: 0.6em 1.2em;
-  border-left: 4px solid #e7e2dc;
-  color: #6b665f;
-  background: #faf9f7;
+  padding: 0.15em 0 0.15em 1.1em;
+  border-left: 2px solid #c9c1b8;
+  color: #625d56;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body blockquote > :first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote > :last-child {
+  margin-bottom: 0;
 }
 
 .markdown-body strong {
@@ -454,23 +463,156 @@ p {
 }
 
 .markdown-body code {
+  font-family: "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace;
   background: #f5f3f1;
   padding: 0.15em 0.35em;
   border-radius: 4px;
-  font-size: 0.92em;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
 }
 
 .markdown-body pre {
+  max-width: 100%;
   overflow-x: auto;
-  padding: 16px;
-  border-radius: 8px;
+  margin: 1.4em 0;
+  padding: 16px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
   background: #f5f3f1;
-  margin-bottom: 1.4em;
+  color: var(--text-color);
+  font-family: "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-wrap: normal;
 }
 
 .markdown-body pre code {
   padding: 0;
+  border-radius: 0;
   background: transparent;
+  font-size: inherit;
+  line-height: inherit;
+  overflow-wrap: normal;
+}
+
+.markdown-code-block {
+  position: relative;
+  max-width: 100%;
+  margin: 1.4em 0;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background: #f5f3f1;
+  overflow: hidden;
+}
+
+.markdown-code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 12px 6px 20px;
+  border-bottom: 1px solid var(--border-color);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.markdown-code-language {
+  min-width: 0;
+  color: #777067;
+  overflow-wrap: anywhere;
+}
+
+.markdown-code-copy {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #625d56;
+  font: inherit;
+  cursor: pointer;
+}
+
+.markdown-code-copy:hover {
+  background: #ebe7e2;
+  color: var(--title-color);
+}
+
+.markdown-code-copy:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 1px;
+}
+
+.markdown-code-copy[aria-disabled="true"] {
+  cursor: wait;
+}
+
+.markdown-body .markdown-code-block pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.markdown-code-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+
+.markdown-code-status-error {
+  position: static;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  padding: 0 20px 12px;
+  color: #94534a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.markdown-body .hljs-comment,
+.markdown-body .hljs-quote {
+  color: #827a70;
+  font-style: italic;
+}
+
+.markdown-body .hljs-keyword,
+.markdown-body .hljs-selector-tag,
+.markdown-body .hljs-literal,
+.markdown-body .hljs-doctag {
+  color: #825775;
+}
+
+.markdown-body .hljs-string,
+.markdown-body .hljs-regexp,
+.markdown-body .hljs-addition {
+  color: #506e50;
+}
+
+.markdown-body .hljs-number,
+.markdown-body .hljs-symbol,
+.markdown-body .hljs-bullet,
+.markdown-body .hljs-deletion {
+  color: #95613e;
+}
+
+.markdown-body .hljs-title,
+.markdown-body .hljs-section,
+.markdown-body .hljs-built_in,
+.markdown-body .hljs-type {
+  color: #456d88;
+}
+
+.markdown-body .hljs-attr,
+.markdown-body .hljs-attribute,
+.markdown-body .hljs-variable,
+.markdown-body .hljs-template-variable,
+.markdown-body .hljs-meta {
+  color: #7b6840;
 }
 
 .markdown-body a {
@@ -483,6 +625,44 @@ p {
   border: none;
   border-top: 1px solid var(--border-color);
   margin: 2.4em 0;
+}
+
+.markdown-body .markdown-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.4em 0;
+}
+
+.markdown-table-scroll:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94em;
+  line-height: 1.65;
+}
+
+.markdown-body th,
+.markdown-body td {
+  min-width: 6em;
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body th {
+  background: #f5f3f1;
+  color: var(--title-color);
+  font-weight: 700;
+}
+
+.markdown-body tbody tr:nth-child(even) {
+  background: #faf9f7;
 }
 
 /* ------------------------------
@@ -501,6 +681,29 @@ p {
   .post-list-summary,
   .markdown-body {
     font-size: 17px;
+  }
+
+  .markdown-body blockquote {
+    padding-left: 0.85em;
+  }
+
+  .markdown-body pre {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .markdown-code-toolbar {
+    padding: 4px 8px 4px 14px;
+  }
+
+  .markdown-code-copy {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .markdown-code-status-error {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .tag-post-row {
@@ -542,6 +745,7 @@ p {
 
 .editor-panel,
 .editor-preview-panel {
+  min-width: 0;
   border: 1px solid var(--border-color);
   background: #fff;
   padding: 28px;

@@ -35,20 +35,23 @@ _XML_INVALID_RANGES = (
     (0xD800, 0xDFFF),
     (0xFFFE, 0xFFFF),
 )
-_BLOCK_TAGS = {"p", "div", "blockquote", "pre", "li", "h1", "h2", "h3", "h4", "h5", "h6"}
+_BLOCK_TAGS = {"p", "div", "blockquote", "pre", "li", "h1", "h2", "h3", "h4", "h5", "h6", "table", "tr", "th", "td"}
 _HTML_TAGS = {
     "a", "blockquote", "br", "code", "em", "h1", "h2", "h3", "h4", "h5", "h6",
     "hr", "img", "li", "ol", "p", "pre", "strong", "ul",
+    "table", "thead", "tbody", "tr", "th", "td",
 }
 _HTML_ATTRIBUTES = {
     "a": {"href", "title"},
     "img": {"src", "alt", "title"},
+    "th": {"align"},
+    "td": {"align"},
 }
 _VOID_TAGS = {"br", "hr", "img"}
 _DANGEROUS_CONTENT_TAGS = {
     "audio", "canvas", "embed", "form", "iframe", "object", "script", "style", "svg", "video",
 }
-_MARKDOWN = MarkdownIt("commonmark", {"html": False, "linkify": False, "typographer": False})
+_MARKDOWN = MarkdownIt("commonmark", {"html": False, "linkify": False, "typographer": False}).enable("table")
 
 
 class FeedConfigurationError(ValueError):
@@ -160,6 +163,11 @@ class _SafeHtmlRewriter(HTMLParser):
         allowed_attrs = _HTML_ATTRIBUTES.get(tag, set())
         for name, value in attrs:
             name = name.lower()
+            if tag in {"th", "td"} and name == "style":
+                alignment = re.fullmatch(r"text-align:\s*(left|center|right);?", value or "")
+                if alignment:
+                    output_attrs.append(f' align="{alignment.group(1)}"')
+                continue
             if name not in allowed_attrs or value is None:
                 continue
             if name == "href":

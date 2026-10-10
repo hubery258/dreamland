@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",
+    "highlight.js": "^11.12.0",
+    "lowlight": "^3.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-icons": "^5.6.0",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.15.1"
+    "react-router-dom": "^7.15.1",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

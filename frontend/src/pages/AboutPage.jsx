@@ -1,7 +1,7 @@
 // src/pages/AboutPage.jsx
 
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import MarkdownContent from "../components/MarkdownContent";
 import PageTitle from "../components/PageTitle";
 import { getAbout } from "../api/client";
 
@@ -55,9 +55,9 @@ function AboutPage() {
         <PageTitle eyebrow="Written by hubery" title={aboutData?.about_title || "About"} />
 
         <article className="markdown-body">
-          <ReactMarkdown>
+          <MarkdownContent>
             {aboutData?.about_content || "暂无内容。"}
-          </ReactMarkdown>
+          </MarkdownContent>
         </article>
       </div>
     </section>
