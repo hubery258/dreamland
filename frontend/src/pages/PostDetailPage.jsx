@@ -1,7 +1,7 @@
 import Giscus from "@giscus/react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
+import MarkdownContent from "../components/MarkdownContent";
 import { getPostBySlug, getPostNeighbors } from "../api/client";
 import PageTitle from "../components/PageTitle";
 
@@ -100,7 +100,7 @@ function PostDetailPage() {
         )}
 
         <article className="markdown-body">
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+          <MarkdownContent>{post.content}</MarkdownContent>
         </article>
 
         <nav className="post-neighbors" aria-label="Adjacent posts">

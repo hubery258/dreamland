@@ -129,6 +129,45 @@ class FeedEndpointTests(unittest.TestCase):
         self.assertNotIn("<script", content)
         self.assertIsNotNone(root.find("channel"))
 
+    def test_tables_preserve_structure_alignment_and_safe_inline_content(self):
+        self.add_post(content=(
+            "| 名称 | 类型 | 数量 |\n"
+            "| :--- | :---: | ---: |\n"
+            "| **苹果** | `水果` | 3 |\n"
+            "| [详情](../about) | A \\| B | 5 |\n"
+            "| <script>alert(1)</script> | [危险](javascript:alert(1)) | 0 |"
+        ))
+        response = self.client.get("/rss.xml")
+        self.assertEqual(response.status_code, 200)
+        _, channel = self.channel(response)
+        item = channel.find("item")
+        content = item.findtext(f"{{{CONTENT_NS}}}encoded")
+        document = ET.fromstring(f"<div>{content}</div>")
+        table = document.find("table")
+        self.assertIsNotNone(table)
+        headers = table.findall("thead/tr/th")
+        self.assertEqual([cell.text for cell in headers], ["名称", "类型", "数量"])
+        self.assertEqual([cell.get("align") for cell in headers], ["left", "center", "right"])
+        rows = table.findall("tbody/tr")
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(rows[0].find("td/strong").text, "苹果")
+        self.assertEqual(rows[0].findall("td")[1].find("code").text, "水果")
+        self.assertEqual(rows[0].findall("td")[2].get("align"), "right")
+        self.assertEqual(rows[1].find("td/a").get("href"), "https://example.com/about")
+        self.assertEqual(rows[1].findall("td")[1].text, "A | B")
+        self.assertNotIn("<script", content)
+        self.assertNotIn('href="javascript:', content)
+        self.assertIn("名称 类型 数量", item.findtext("description"))
+
+    def test_table_syntax_inside_code_blocks_stays_code(self):
+        self.add_post(content="```markdown\n| 名称 | 数量 |\n| --- | --- |\n| 苹果 | 3 |\n```")
+        response = self.client.get("/rss.xml")
+        _, channel = self.channel(response)
+        content = channel.find("item").findtext(f"{{{CONTENT_NS}}}encoded")
+        self.assertNotIn("<table", content)
+        self.assertIn("<pre><code>", content)
+        self.assertIn("| 苹果 | 3 |", content)
+
     def test_edit_changes_etag_but_not_guid_or_pubdate(self):
         post_id = self.add_post(
             title="原始标题",

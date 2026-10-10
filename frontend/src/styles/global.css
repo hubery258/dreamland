@@ -485,6 +485,44 @@ p {
   margin: 2.4em 0;
 }
 
+.markdown-body .markdown-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.4em 0;
+}
+
+.markdown-table-scroll:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94em;
+  line-height: 1.65;
+}
+
+.markdown-body th,
+.markdown-body td {
+  min-width: 6em;
+  border: 1px solid var(--border-color);
+  padding: 10px 14px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.markdown-body th {
+  background: #f5f3f1;
+  color: var(--title-color);
+  font-weight: 700;
+}
+
+.markdown-body tbody tr:nth-child(even) {
+  background: #faf9f7;
+}
+
 /* ------------------------------
    响应式补充
    ------------------------------ */
@@ -542,6 +580,7 @@ p {
 
 .editor-panel,
 .editor-preview-panel {
+  min-width: 0;
   border: 1px solid var(--border-color);
   background: #fff;
   padding: 28px;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
+import MarkdownContent from "../components/MarkdownContent";
 import { createPost, getPostBySlug, updatePost } from "../api/client";
 
 function parseTags(tagInput) {
@@ -233,7 +233,7 @@ function NewPostPage() {
                     </div>
                   )}
                   <article className="markdown-body">
-                    <ReactMarkdown>{content || "右侧会实时预览 Markdown 内容。"}</ReactMarkdown>
+                    <MarkdownContent>{content || "右侧会实时预览 Markdown 内容。"}</MarkdownContent>
                   </article>
                 </>
               ) : (
