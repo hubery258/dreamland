@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
  * 通用请求函数
  * 以后所有 API 调用都从这里走
  */
-async function request(path, options = {}) {
+export async function request(path, options = {}) {
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
 

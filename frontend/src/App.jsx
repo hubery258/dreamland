@@ -12,6 +12,8 @@ import FriendsAdminPage from "./pages/FriendsAdminPage";
 import NewPostPage from "./pages/NewPostPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import TagsPage from "./pages/TagsPage";
+import NowPage from "./pages/NowPage";
+import NowAdminPage from "./pages/NowAdminPage";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
 
         {/* about 页面先保留路由，但不在导航显示 */}
         <Route path="about" element={<AboutPage />} />
+        <Route path="now" element={<NowPage />} />
+        <Route path="admin/now" element={<NowAdminPage />} />
 
         <Route path="admin/new" element={<NewPostPage />} />
         <Route path="admin/gallery" element={<GalleryAdminPage />} />

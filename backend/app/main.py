@@ -13,7 +13,7 @@ load_dotenv()
 
 from .database import engine, Base, SessionLocal
 from .friends_crud import seed_friends
-from .routers import feed, friends, gallery, posts, site, tags
+from .routers import feed, friends, gallery, posts, site, tags, now
 
 # 创建数据库表
 # 第一次运行时会自动建表
@@ -50,6 +50,7 @@ app.include_router(site.router)
 app.include_router(gallery.router)
 app.include_router(friends.router)
 app.include_router(feed.router)
+app.include_router(now.router)
 
 
 @app.get("/")
