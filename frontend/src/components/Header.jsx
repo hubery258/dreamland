@@ -27,6 +27,9 @@ function Header() {
           <NavLink to="/friends" className={navClassName}>
             Friends
           </NavLink>
+          <NavLink to="/about" className={navClassName}>
+            About
+          </NavLink>
           <NavLink to="/now" className={navClassName}>
             Now
           </NavLink>

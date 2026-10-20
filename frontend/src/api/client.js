@@ -102,9 +102,10 @@ export function getAbout() {
 /**
  * 更新 About 内容
  */
-export function updateAbout(data) {
+export function updateAbout(data, adminSecret) {
   return request("/site/about", {
     method: "PUT",
+    headers: { "X-Admin-Secret": adminSecret },
     body: JSON.stringify(data),
   });
 }
