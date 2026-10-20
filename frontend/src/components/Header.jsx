@@ -18,14 +18,11 @@ function Header() {
           <NavLink to="/" end className={navClassName}>
             Posts
           </NavLink>
-          <NavLink to="/tags" className={navClassName}>
-            Tags
+          <NavLink to="/now" className={navClassName}>
+            Now
           </NavLink>
-          <NavLink to="/gallery" className={navClassName}>
-            Gallery
-          </NavLink>
-          <NavLink to="/friends" className={navClassName}>
-            Friends
+          <NavLink to="/about" className={navClassName}>
+            About
           </NavLink>
           <a
             href="https://note.ramenboy.cc"
@@ -33,8 +30,14 @@ function Header() {
             target="_blank"
             rel="noreferrer"
           >
-            Note
+            Notebook
           </a>
+          <NavLink to="/gallery" className={navClassName}>
+            Gallery
+          </NavLink>
+          <NavLink to="/friends" className={navClassName}>
+            Friends
+          </NavLink>
           <a
             href="https://www.travellings.cn/go.html"
             className="nav-link"

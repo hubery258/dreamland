@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 
 import AboutPage from "./pages/AboutPage";
+import AboutAdminPage from "./pages/AboutAdminPage";
 import FriendsPage from "./pages/FriendsPage";
 import GalleryPage from "./pages/GalleryPage";
 import HomePage from "./pages/HomePage";
@@ -12,6 +13,8 @@ import FriendsAdminPage from "./pages/FriendsAdminPage";
 import NewPostPage from "./pages/NewPostPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import TagsPage from "./pages/TagsPage";
+import NowPage from "./pages/NowPage";
+import NowAdminPage from "./pages/NowAdminPage";
 
 function App() {
   return (
@@ -24,8 +27,10 @@ function App() {
         <Route path="gallery" element={<GalleryPage />} />
         <Route path="gallery/:albumId" element={<GalleryPage />} />
 
-        {/* about 页面先保留路由，但不在导航显示 */}
         <Route path="about" element={<AboutPage />} />
+        <Route path="admin/about" element={<AboutAdminPage />} />
+        <Route path="now" element={<NowPage />} />
+        <Route path="admin/now" element={<NowAdminPage />} />
 
         <Route path="admin/new" element={<NewPostPage />} />
         <Route path="admin/gallery" element={<GalleryAdminPage />} />

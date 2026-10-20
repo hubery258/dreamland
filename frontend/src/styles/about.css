@@ -1,0 +1,44 @@
+.about-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.about-preview {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color, #ddd7d2);
+}
+
+.about-admin a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.about-body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.about-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .about-body h1 {
+    font-size: 32px;
+  }
+
+  .about-body h2 {
+    font-size: 28px;
+  }
+
+  .about-body h3 {
+    font-size: 23px;
+  }
+}

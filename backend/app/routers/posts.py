@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from .. import crud, schemas
 from ..auth import verify_admin_secret
 from ..database import get_db
+from ..search_schemas import SearchResults
+from ..services.search import search_posts
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
@@ -25,6 +27,12 @@ def create_new_post(
     """创建新文章。"""
     verify_admin_secret(x_admin_secret)
     return crud.create_post(db, post)
+
+
+@router.get("/search/", response_model=SearchResults)
+def search_articles(q: str = "", page: str = "1", db: Session = Depends(get_db)):
+    """只搜索 Posts 标题及 Markdown 可读正文，每页十篇。"""
+    return search_posts(db, q, page)
 
 
 @router.get("/{slug}", response_model=schemas.PostRead)

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import MarkdownContent from "../components/MarkdownContent";
 import PageTitle from "../components/PageTitle";
 import { getAbout } from "../api/client";
+import { aboutBody } from "../api/aboutContent";
+import "../styles/about.css";
 
 function AboutPage() {
   const [aboutData, setAboutData] = useState(null);
@@ -11,29 +13,31 @@ function AboutPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
     async function fetchAbout() {
       try {
         setLoading(true);
         setError("");
 
         const data = await getAbout();
-        setAboutData(data);
+        if (active) setAboutData(data);
       } catch (err) {
         console.error("获取 About 内容失败:", err);
-        setError("About 页面加载失败，请检查后端是否启动。");
+        if (active) setError("About 页面暂时无法加载，请稍后刷新重试。");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }
 
     fetchAbout();
+    return () => { active = false; };
   }, []);
 
   if (loading) {
     return (
       <section className="page-section">
         <div className="content-width">
-          <p className="muted-text">Loading about...</p>
+          <p className="muted-text" role="status">正在加载 About…</p>
         </div>
       </section>
     );
@@ -43,7 +47,7 @@ function AboutPage() {
     return (
       <section className="page-section">
         <div className="content-width">
-          <p className="error-text">{error}</p>
+          <p className="error-text" role="alert">{error}</p>
         </div>
       </section>
     );
@@ -52,11 +56,11 @@ function AboutPage() {
   return (
     <section className="page-section">
       <div className="content-width">
-        <PageTitle eyebrow="Written by hubery" title={aboutData?.about_title || "About"} />
+        <PageTitle title={aboutData?.about_title || "About"} />
 
-        <article className="markdown-body">
+        <article className="markdown-body about-body">
           <MarkdownContent>
-            {aboutData?.about_content || "暂无内容。"}
+            {aboutBody(aboutData?.about_content)}
           </MarkdownContent>
         </article>
       </div>
