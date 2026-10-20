@@ -230,7 +230,7 @@ def get_site_meta(db: Session):
     if not meta:
         meta = models.SiteMeta(
             about_title="About",
-            about_content="这里写你的自我介绍。你以后可以从接口里更新。"
+            about_content=""
         )
         db.add(meta)
         db.commit()

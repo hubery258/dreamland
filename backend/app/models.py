@@ -78,7 +78,7 @@ class SiteMeta(Base):
     about_title = Column(String(255), default="About")
 
     # About 页内容，支持 Markdown
-    about_content = Column(Text, default="这里写你的自我介绍。")
+    about_content = Column(Text, default="")
 
 # ----------------------------
 # Gallery：相册与照片
