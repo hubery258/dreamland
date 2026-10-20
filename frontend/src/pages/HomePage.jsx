@@ -1,11 +1,14 @@
 // src/pages/HomePage.jsx
 
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { getPosts, getTags } from "../api/client";
 import PostListItem from "../components/PostListItem";
 import ProfileCard from "../components/ProfileCard";
+import PostsSearch from "../components/PostsSearch";
 
 function HomePage() {
+  const location = useLocation();
   const [posts, setPosts] = useState([]);
   const [tags, setTags] = useState([]);
 
@@ -39,31 +42,24 @@ function HomePage() {
 
   return (
     <section className="page-section">
-      <div className="home-layout">
-        {/* 左侧个人卡片 */}
-        <div className="home-sidebar">
-          <ProfileCard postCount={posts.length} tagCount={tags.length} />
-        </div>
+      <PostsSearch key={location.key}
+        sidebar={<ProfileCard postCount={posts.length} tagCount={tags.length} />}>
+            {loading && <p className="muted-text">Loading posts...</p>}
 
-        {/* 右侧文章列表 */}
-        <div className="home-main">
-          {loading && <p className="muted-text">Loading posts...</p>}
+            {!loading && error && <p className="error-text">{error}</p>}
 
-          {!loading && error && <p className="error-text">{error}</p>}
+            {!loading && !error && posts.length === 0 && (
+              <p className="muted-text">还没有文章，先去后台发一篇吧。</p>
+            )}
 
-          {!loading && !error && posts.length === 0 && (
-            <p className="muted-text">还没有文章，先去后台发一篇吧。</p>
-          )}
-
-          {!loading && !error && posts.length > 0 && (
-            <div className="post-list">
-              {posts.map((post) => (
-                <PostListItem key={post.id} post={post} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+            {!loading && !error && posts.length > 0 && (
+              <div className="post-list">
+                {posts.map((post) => (
+                  <PostListItem key={post.id} post={post} />
+                ))}
+              </div>
+            )}
+      </PostsSearch>
     </section>
   );
 }

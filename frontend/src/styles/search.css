@@ -1,0 +1,76 @@
+.posts-search {
+  min-width: 0;
+  width: min(100% - 80px, 1180px);
+  margin: 0 auto;
+}
+.posts-search > .home-layout { width: 100%; }
+.posts-search .home-main > .post-list > .post-list-item:first-child > .post-list-link { padding-top: 0; }
+.posts-search-form {
+  width: 48px;
+  max-width: 100%;
+  margin: 0 0 16px auto;
+  transition: width 280ms ease;
+}
+.posts-search-form.is-expanded { width: 100%; }
+.search-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.search-input-row { position: relative; width: 100%; height: 48px; }
+.search-input-row .form-input {
+  height: 48px;
+  min-width: 0;
+  padding-right: 56px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, border-color 180ms ease;
+}
+.posts-search-form.is-expanded .form-input { opacity: 1; visibility: visible; }
+.posts-search-form:not(.is-expanded) .form-input { padding-left: 0; padding-right: 0; }
+.search-input-row input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.search-input-row button {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
+  width: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.posts-search button:disabled { opacity: .45; cursor: wait; }
+.posts-search :is(button, a):focus-visible { outline: 2px solid var(--link-color); outline-offset: 3px; }
+.search-help { font-size: 14px; margin: 0 0 20px; color: var(--text-color); opacity: .8; }
+.search-status-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.search-status-row p { min-width: 0; overflow-wrap: anywhere; }
+.search-text-button { flex-shrink: 0; border: 0; padding: 0; background: transparent; color: var(--text-color); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.search-post { padding: 28px 0 34px; overflow-wrap: anywhere; }
+.search-post .post-list-title { overflow-wrap: anywhere; }
+.search-tags { display: flex; flex-wrap: wrap; list-style: none; padding: 0; margin: 16px 0; gap: 10px; }
+.search-tags .tag-pill { line-height: 1.5; }
+.search-snippet { margin: 18px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.posts-search mark { background: #f6e5ac; color: #302a1d; border-radius: 2px; padding: 0; }
+.search-pagination { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+.search-pagination a { text-decoration: underline; text-underline-offset: 4px; }
+.search-pagination [aria-disabled] { color: var(--muted-color); }
+@media (max-width: 1024px) {
+  .posts-search { width: min(100% - 32px, 1180px); }
+}
+@media (prefers-color-scheme: dark) {
+  .posts-search mark { background: #685422; color: #fff4cc; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .posts-search-form, .search-input-row .form-input { transition: none; }
+}
