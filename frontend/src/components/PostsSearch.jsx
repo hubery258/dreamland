@@ -114,6 +114,8 @@ export default function PostsSearch({ children, sidebar }) {
 
   return (
     <div className="posts-search">
+      <div className="home-layout posts-browse-tools">
+        <Link className="posts-tags-link" to="/tags">按标签浏览 ↗</Link>
       <form role="search" aria-label="搜索 Posts"
         className={`posts-search-form${expanded ? " is-expanded" : ""}`} onSubmit={submit}
         onKeyDown={event => {
@@ -140,6 +142,7 @@ export default function PostsSearch({ children, sidebar }) {
           </button>
         </div>
       </form>
+      </div>
       <div className="home-layout">
         <div className="home-sidebar">{sidebar}</div>
         <div className="home-main">
